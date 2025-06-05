@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { VaultService } from './vault.service';
 import { CreateVaultDto } from './dto/create-vault.dto';
 import { SyncVaultDto } from './dto/sync-vault.dto';
@@ -12,17 +12,19 @@ export class VaultController {
     return this.vaultService.handleVaultInitialization(createVaultInput);
   }
 
-  @Get(':id/files')
-  async getVaultFiles(@Param('id') id: string) {
-    return this.vaultService.getVaultFiles(id);
+  @Get(':vaultId/files')
+  async getVaultFiles(
+    @Param('vaultId') vaultId: string,
+    @Query('since') since: Date,
+  ) {
+    return this.vaultService.getVaultFiles(vaultId, since);
   }
 
-  @Post(':id/files')
+  @Post(':vaultId/files')
   async syncVaultFiles(
-    @Param('id') id: string,
-    @Body()
-    body: SyncVaultDto,
+    @Param('vaultId') vaultId: string,
+    @Body() body: SyncVaultDto,
   ) {
-    return this.vaultService.syncFilesToVault(id, body.files);
+    return this.vaultService.syncFilesToVault(vaultId, body.files);
   }
 }

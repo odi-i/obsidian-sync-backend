@@ -10,7 +10,7 @@ export class FileService {
   constructor(private prisma: PrismaService) {}
 
   async createFile({ vaultId, path }: CreateFileDto) {
-    const existing = await this.prisma.file.findUnique({
+    const existing = await this.prisma.file.findFirst({
       where: {
         vaultId,
         path,
@@ -25,39 +25,36 @@ export class FileService {
       data: {
         path,
         vaultId,
-        timestamp: new Date(),
       } as Prisma.FileUncheckedCreateInput,
     });
   }
 
   async modifyContent(vaultId: string, { path, content }: UpdateFileDto) {
-    return await this.prisma.file.update({
+    return this.prisma.file.updateMany({
       where: {
         vaultId,
         path,
       },
       data: {
         content,
-        timestamp: new Date(),
       },
     });
   }
 
   async rename(vaultId: string, { path, newPath }: RenameFileDto) {
-    return await this.prisma.file.update({
+    return this.prisma.file.updateMany({
       where: {
         vaultId,
         path,
       },
       data: {
         path: newPath,
-        timestamp: new Date(),
       },
     });
   }
 
   async remove(path: string, vaultId: string) {
-    return await this.prisma.file.delete({
+    return this.prisma.file.deleteMany({
       where: {
         vaultId,
         path,

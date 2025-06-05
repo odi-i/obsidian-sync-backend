@@ -5,36 +5,35 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-   provider = "prisma-client-js"
-   output   = "../node_modules/.prisma/client"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-   provider = "postgresql"
-   url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Vault {
-   id    String @id @default(uuid())
-   email String @unique
-   files File[]
+  id    String @id @default(uuid())
+  email String @unique
+  files File[]
 
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model File {
-   id        String   @id @default(uuid())
-   path      String   @unique
-   content   String   @default("")
-   timestamp DateTime
+  id      String @id @default(uuid())
+  path    String
+  content String @default("")
 
-   vault   Vault  @relation(fields: [vaultId], references: [id])
-   vaultId String
+  vault   Vault  @relation(fields: [vaultId], references: [id])
+  vaultId String
 
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-   @@index([vaultId])
-   @@index([path])
+  @@index([vaultId])
+  @@index([path])
 }

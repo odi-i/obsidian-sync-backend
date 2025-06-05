@@ -31,13 +31,18 @@ export class VaultService {
     };
   }
 
-  async getVaultFiles(vaultId: string) {
+  async getVaultFiles(vaultId: string, since: Date) {
     const files = await this.prisma.file.findMany({
-      where: { vaultId },
+      where: {
+        vaultId,
+        updatedAt: {
+          gte: since,
+        },
+      },
       select: { path: true, content: true },
     });
 
-    return { files };
+    return { files, serverTimestampNow: new Date() };
   }
 
   async syncFilesToVault(vaultId: string, files: SyncVaultDto['files']) {
@@ -48,7 +53,6 @@ export class VaultService {
           vaultId,
           path: file.path,
           content: file.content,
-          timestamp: new Date(),
         })),
       }),
     ]);
